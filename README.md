@@ -77,6 +77,62 @@ Copy the environment template and set local model paths when the machine cannot 
 cp .env.example .env
 ```
 
+## Docker
+
+FinRoute ships as a portable, CPU-only image (Python 3.11 with CPU PyTorch wheels). The image entrypoint is the `finroute` CLI, and all state — PDFs, index artifacts, Hugging Face model cache — lives in mounted volumes, so nothing is baked into the image.
+
+Build it locally:
+
+```bash
+docker build -t finroute:local .
+```
+
+CI also publishes the image to GHCR on every push to `main` and on version tags:
+
+```bash
+docker pull ghcr.io/<owner>/finroute  # image name follows the repository name
+```
+
+### Build the index and ask questions
+
+```bash
+# Build the index from your local data/ directory
+docker run --rm -u "$(id -u):$(id -g)" \
+  -v "$PWD/data:/app/data" -v "$PWD/artifacts:/app/artifacts" -v finroute_hf_cache:/app/hf_cache \
+  finroute:local build-index \
+  --pdf-dir data/pdfs --metadata data/documents.csv --artifacts artifacts
+
+# Retrieval-only answer (JSON with plan, routed documents, pages, grade, trace)
+docker run --rm -u "$(id -u):$(id -g)" \
+  -v "$PWD/artifacts:/app/artifacts" -v finroute_hf_cache:/app/hf_cache \
+  finroute:local ask \
+  --artifacts artifacts --question "What was the company's operating margin in 2023?"
+
+# Add --generate to load the configured Qwen model and produce a grounded answer
+```
+
+Notes:
+
+- `-u "$(id -u):$(id -g)"` keeps files written to `./artifacts` owned by your user instead of root. On Windows (PowerShell) omit it and use `${PWD}` for bind paths.
+- The named `finroute_hf_cache` volume persists Hugging Face weights so models download only once.
+- Override any `FINROUTE_*` variable with `--env-file .env` or `-e FINROUTE_HF_LOCAL_ONLY=1` (see `.env.example`).
+
+### docker compose
+
+`docker-compose.yml` wires up the same volumes and loads `.env` when present:
+
+```bash
+docker compose run --rm finroute build-index \
+  --pdf-dir data/pdfs --metadata data/documents.csv --artifacts artifacts
+
+docker compose run --rm finroute ask \
+  --artifacts artifacts --question "..." --generate
+```
+
+### CPU vs. GPU
+
+The image uses CPU PyTorch wheels to stay portable and small; retrieval, reranking, and generation all run on CPU (generation is slower). For heavy local generation on a GPU, either run the project natively (see Installation) or set `FINROUTE_GENERATOR_BACKEND=openai_compatible` and point `FINROUTE_GENERATOR_BASE_URL` at a vLLM/SGLang server serving the same model.
+
 ## Prepare data
 
 Financial PDFs and benchmark answers can be downloaded from [Financebench Dataset](https://github.com/patronus-ai/financebench/tree/main). Place PDFs under `data/pdfs/` and create `data/documents.csv` with:
@@ -85,6 +141,10 @@ Financial PDFs and benchmark answers can be downloaded from [Financebench Datase
 doc_name,file_name,company,year,form
 example_2023_10k,example.pdf,Example Corp,2023,10-K
 ```
+
+> **No filings handy?** [examples/README.md](examples/README.md) generates a tiny
+> synthetic dataset (fictional 10-Ks, metadata, and gold labels) and runs the entire
+> workflow — index build, ask, evaluate — natively or inside Docker.
 
 Build the page/chunk/table corpora, embeddings, BM25 state, and persistent Chroma collections:
 

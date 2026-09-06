@@ -10,6 +10,7 @@ __pycache__/
 .idea/
 .vscode/
 .DS_Store
+.zcode/
 
 # Secrets and local configuration
 .env
@@ -18,6 +19,7 @@ __pycache__/
 
 # Data, models, caches, and experiment outputs
 data/pdfs/
+data/documents.csv
 data/*.jsonl
 data/*.parquet
 artifacts/
