@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.venv/
+
+# Editors and OS
+.idea/
+.vscode/
+.DS_Store
+
+# Secrets and local configuration
+.env
+*.key
+*.pem
+
+# Data, models, caches, and experiment outputs
+data/pdfs/
+data/*.jsonl
+data/*.parquet
+artifacts/
+models/
+hf_cache/
+chroma/
+outputs/
+*.npy
+*.npz
+*.safetensors
+*.bin
+*.zip
+
+# Notebook artifacts are intentionally excluded from the public package
+*.ipynb
+.ipynb_checkpoints/

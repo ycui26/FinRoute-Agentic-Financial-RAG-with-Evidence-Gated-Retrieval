@@ -1,0 +1,51 @@
+models:
+  embedding: BAAI/bge-small-en-v1.5
+  reranker: BAAI/bge-reranker-v2-m3
+  generator: Qwen/Qwen3-4B-Instruct-2507
+  query_prefix: "Represent this sentence for searching relevant passages: "
+  local_files_only: false
+
+chunking:
+  parent_size: 1800
+  parent_overlap: 250
+  child_size: 650
+  child_overlap: 100
+  minimum_chars: 80
+
+retrieval:
+  dense_candidates: 100
+  bm25_candidates: 100
+  rrf_k: 60
+  union_candidates: 120
+  page_shortlist: 20
+  final_top_k: 5
+  routed_document_top_k: 3
+  table_blocks_per_query: 20
+  child_pages_per_query: 5
+  minimum_document_candidates: 2
+  minimum_table_candidates: 12
+  maximum_child_only_candidates: 8
+
+reranking:
+  reranker_weight: 0.70
+  fusion_weight: 0.20
+  structure_weight: 0.10
+  excerpt_max_chars: 2000
+  excerpt_line_window: 1
+  operand_gain_weight: 0.22
+  statement_gain_weight: 0.08
+  year_gain_weight: 0.05
+
+grading:
+  minimum_term_coverage: 0.45
+  minimum_candidate_pages: 20
+  require_numeric_anchor: true
+  numeric_anchor_window: 180
+  maximum_retries: 1
+
+runtime:
+  seed: 42
+  use_chroma: true
+  generator_backend: local_transformers
+  generator_base_url: http://127.0.0.1:8000/v1
+  generator_api_key: EMPTY
