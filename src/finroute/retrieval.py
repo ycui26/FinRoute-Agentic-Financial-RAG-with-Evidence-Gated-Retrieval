@@ -101,9 +101,14 @@ class PageRetriever:
             )
             for row in result.to_dict(orient="records")
         ]
-        result["table_quality_score"] = pd.to_numeric(
-            result.get("table_quality_score", 0.5), errors="coerce"
-        ).fillna(0.5)
+        # Narrative frames carry no table_quality_score column; default to 0.5
+        # instead of letting the scalar fallback flow through pd.to_numeric.
+        if "table_quality_score" in result.columns:
+            result["table_quality_score"] = pd.to_numeric(
+                result["table_quality_score"], errors="coerce"
+            ).fillna(0.5)
+        else:
+            result["table_quality_score"] = 0.5
         structure = 1.0 + 0.15 * result["statement_match"] + 0.10 * result["table_quality_score"]
         result["fusion_contribution"] = (
             1.0 / (self.config.retrieval.rrf_k + result["path_rank"])
