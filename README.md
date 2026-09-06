@@ -79,7 +79,7 @@ cp .env.example .env
 
 ## Prepare data
 
-Financial PDFs and benchmark answers are intentionally not committed. Place PDFs under `data/pdfs/` and create `data/documents.csv` with:
+Financial PDFs and benchmark answers can be downloaded from [Financebench Dataset](https://github.com/patronus-ai/financebench/tree/main). Place PDFs under `data/pdfs/` and create `data/documents.csv` with:
 
 ```csv
 doc_name,file_name,company,year,form
