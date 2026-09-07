@@ -1,0 +1,22 @@
+services:
+  finroute:
+    build:
+      context: .
+      target: runtime
+    image: finroute:local
+    volumes:
+      - ./data:/app/data
+      - ./artifacts:/app/artifacts
+      # Hugging Face weights download once and are reused across runs.
+      - hf_cache:/app/hf_cache
+    env_file:
+      # Optional; ignored when .env does not exist (compose v2.24+).
+      - path: .env
+        required: false
+    # The entrypoint is the `finroute` CLI. Override the command per run, e.g.:
+    #   docker compose run --rm finroute build-index --pdf-dir data/pdfs \
+    #     --metadata data/documents.csv --artifacts artifacts
+    command: ["--help"]
+
+volumes:
+  hf_cache:

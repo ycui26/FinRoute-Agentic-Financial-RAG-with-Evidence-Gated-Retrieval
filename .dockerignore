@@ -1,0 +1,46 @@
+# Keep the build context small and never bake local data/models into the image.
+.git
+.github
+.gitignore
+.dockerignore
+Dockerfile
+docker-compose.yml
+
+# Local runtime state (mount these as volumes instead)
+artifacts/
+outputs/
+chroma/
+hf_cache/
+models/
+
+# Datasets and generated data (mount as volumes instead)
+data/pdfs/
+data/*.jsonl
+data/*.parquet
+
+# Model weights and tensors
+*.npy
+*.npz
+*.safetensors
+*.bin
+*.pt
+*.onnx
+
+# Environments and secrets
+.env
+.venv/
+venv/
+
+# Python build artifacts
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+
+# Notebooks and OS noise
+*.ipynb
+.DS_Store
+Thumbs.db
