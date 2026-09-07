@@ -64,8 +64,8 @@ finroute/
 Python 3.10+ and a CUDA-capable GPU are recommended for reranking and local generation.
 
 ```bash
-git clone https://github.com/<your-account>/finroute.git
-cd finroute
+git clone https://github.com/ycui26/FinRoute-Agentic-Financial-RAG-with-Evidence-Gated-Retrieval.git
+cd FinRoute-Agentic-Financial-RAG-with-Evidence-Gated-Retrieval
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -e .
@@ -90,7 +90,7 @@ docker build -t finroute:local .
 CI also publishes the image to GHCR on every push to `main` and on version tags:
 
 ```bash
-docker pull ghcr.io/<owner>/finroute  # image name follows the repository name
+docker pull ghcr.io/ycui26/finroute-agentic-financial-rag-with-evidence-gated-retrieval:latest
 ```
 
 ### Build the index and ask questions
